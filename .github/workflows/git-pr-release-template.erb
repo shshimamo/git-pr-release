@@ -1,0 +1,10 @@
+[Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
+
+<% labels = ['dependencies'] -%>
+<% dependencies_pr = pull_requests.filter { |pr| pr.labels.any? { |l| l.name == 'dependencies' } } -%>
+<% others = pull_requests.filter { |pr| (pr.labels & labels).empty? } -%>
+
+<!-- dependencies ラベルを持つPRの表示 -->
+<% dependencies_pr&.each do |pr| -%>
+  <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
+<% end -%>
