@@ -1,15 +1,18 @@
 [Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
 
-<% labels = ['dependencies'] -%>
-<% dependencies_pr = pull_requests.filter { |pr| pr.labels.any? { |l| l.name == 'dependencies' } } -%>
-<% others = pull_requests.filter { |pr| (pr.labels & labels).empty? } -%>
+<% milestones = pull_requests.map { |pr| pr.milestone&.title }.uniq.sort %>
 
-<% others&.each do |pr| -%>
-  <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
-<% end -%>
+<!-- No milestone を先頭に移動 -->
+<% if milestones.include?(nil) %>
+  <% milestones.delete(nil) %>
+  <% milestones.unshift(nil) %>
+<% end %>
 
-<!-- dependencies ラベルを持つPRの表示 -->
-## dependencies
-<% dependencies_pr&.each do |pr| -%>
-  <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
+<% milestones&.each do |mile_title| -%>
+  <%= "## #{mile_title || 'No milestone'}" %>
+  <% pull_requests.each do |pr| %>
+    <% if pr.milestone&.title == mile_title %>
+        <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
+    <% end %>
+  <% end %>
 <% end -%>
