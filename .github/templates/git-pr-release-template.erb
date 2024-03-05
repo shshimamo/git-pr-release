@@ -5,7 +5,7 @@
 <!-- No milestone を最後に移動 -->
 <% if milestone_titles.include?(nil) %>
   <% milestone_titles.delete(nil) %>
-  <% milestone_titles.add('No milestone') %>
+  <% milestone_titles.push('No milestone') %>
 <% end %>
 
 <% milestone_titles&.each do |title| -%>
