@@ -1,18 +1,17 @@
 [Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
 
-<% milestone_titles = pull_requests.map { |pr| pr.milestone&.title }.uniq %>
+<%- milestone_titles = pull_requests.map { |pr| pr.milestone&.title }.uniq -%>
 
-<!-- No milestone を最後に移動 -->
-<% if milestone_titles.include?(nil) %>
-  <% milestone_titles.delete(nil) %>
-  <% milestone_titles.push('No milestone') %>
-<% end %>
+<%- if milestone_titles.include?(nil) -%>
+  <%- milestone_titles.delete(nil) -%>
+  <%- milestone_titles.push('No milestone') -%>
+<%- end -%>
 
-<% milestone_titles&.each do |title| -%>
-  <%= "## #{title}" %>
-  <% pull_requests.each do |pr| %>
-    <% if (pr.milestone&.title || 'No milestone') == title %>
-        <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
-    <% end %>
-  <% end %>
-<% end -%>
+<%- milestone_titles&.each do |title| -%>
+<%= "## #{title}" %>
+  <%- pull_requests.each do |pr| -%>
+    <-% if (pr.milestone&.title || 'No milestone') == title -%>
+<%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
+    <-% end -%>
+  <%- end -%>
+<%- end -%>
