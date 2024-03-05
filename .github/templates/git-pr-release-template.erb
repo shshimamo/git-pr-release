@@ -1,17 +1,17 @@
 [Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
 
-<% milestones = pull_requests.map { |pr| pr.milestone&.title }.uniq %>
+<% milestone_titles = pull_requests.map { |pr| pr.milestone&.title }.uniq %>
 
 <!-- No milestone を最後に移動 -->
-<% if milestones.include?(nil) %>
-  <% milestones.delete(nil) %>
-  <% milestones.shift(nil) %>
+<% if milestone_titles.include?(nil) %>
+  <% milestone_titles.delete(nil) %>
+  <% milestone_titles.shift('No milestone') %>
 <% end %>
 
-<% milestones&.each do |mile_title| -%>
-  <%= "## #{mile_title || 'No milestone'}" %>
+<% milestone_titles&.each do |title| -%>
+  <%= "## #{title}" %>
   <% pull_requests.each do |pr| %>
-    <% if pr.milestone&.title == mile_title %>
+    <% if (pr.milestone&.title || 'No milestone') == title %>
         <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
     <% end %>
   <% end %>
