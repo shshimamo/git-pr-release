@@ -1,11 +1,11 @@
 [Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
 
-<% milestones = pull_requests.map { |pr| pr.milestone&.title }.uniq.sort %>
+<% milestones = pull_requests.map { |pr| pr.milestone&.title }.uniq %>
 
-<!-- No milestone を先頭に移動 -->
+<!-- No milestone を最後に移動 -->
 <% if milestones.include?(nil) %>
   <% milestones.delete(nil) %>
-  <% milestones.unshift(nil) %>
+  <% milestones.shift(nil) %>
 <% end %>
 
 <% milestones&.each do |mile_title| -%>
