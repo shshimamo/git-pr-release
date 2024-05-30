@@ -26,8 +26,8 @@ jobs:
           GIT_PR_RELEASE_BRANCH_PRODUCTION: main
           GIT_PR_RELEASE_BRANCH_STAGING: develop
           GIT_PR_RELEASE_TEMPLATE: .github/templates/git-pr-release-template.erb
-      - name: Check output
-        run: echo "${{ steps.git-pr-release.outputs.release }}"
+#      - name: Check output
+#        run: echo "${{ steps.git-pr-release.outputs.release }}"
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
