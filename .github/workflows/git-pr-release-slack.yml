@@ -19,7 +19,7 @@ jobs:
       - name: git-pr-release
         id: git-pr-release
         run: |
-          release=$(git-pr-release -n --json | jq -r '.release_pull_request.data.body')
+          release=$(git-pr-release -n --json | jq '.release_pull_request.data.body')
           echo "release=${release}" >> $GITHUB_OUTPUT
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
