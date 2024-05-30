@@ -19,7 +19,8 @@ jobs:
       - name: git-pr-release
         id: git-pr-release
         run: |
-          release=$(git-pr-release --dry-run 2>&1)
+#          release=$(git-pr-release --dry-run 2>&1 | tee)
+          release=$(ruby -e 'STDERR.puts "error message"' 2>&1)
           echo "release=${release}" >> $GITHUB_OUTPUT
         env:
           GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
