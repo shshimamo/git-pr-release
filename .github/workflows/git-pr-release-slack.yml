@@ -1,0 +1,45 @@
+name: 'git-pr-release-slack'
+
+on:
+  pull_request:
+
+jobs:
+  gitPrRelease:
+    name: git-pr-release-slack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - name: Install git-pr-release
+        run: gem install --no-document git-pr-release --version 2.2.0
+      - name: git-pr-release
+        id: git-pr-release
+        run: |
+          release=$(git-pr-release --dry-run)
+          echo "release=${release}" >> $GITHUB_OUTPUT
+        env:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: main
+          GIT_PR_RELEASE_BRANCH_STAGING: develop
+          GIT_PR_RELEASE_TEMPLATE: .github/templates/git-pr-release-template.erb
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              text: 'Output: ${{ steps.git-pr-release.outputs.release }}'
+            }
+#          custom_payload: |
+#            {
+#              attachments: [{
+#                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+#                text: `Git PR Release Output:\n${{ steps.git-pr-release.outputs.release }}`,
+#              }]
+#            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
