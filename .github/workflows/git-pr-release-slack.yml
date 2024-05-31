@@ -1,7 +1,9 @@
 name: 'git-pr-release-slack'
 
 on:
-  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   gitPrRelease:
