@@ -16,7 +16,7 @@ jobs:
       - name: Extract PR body
         id: extract_body
         run: |
-          release=$(echo "${{ github.event.pull_request.body }}" | awk '/## 概要/{flag=1;next}/^##/{flag=0}flag')
+          release=$(gh pr view 27 --json body | jq -r .body | awk '/## 概要/{flag=1;next}/##/{flag=0}flag')
           echo "release=${release}" >> $GITHUB_OUTPUT
       - id: repository
         run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
@@ -26,7 +26,7 @@ jobs:
           fields: workflow,job,commit,repo,ref,author,took
           custom_payload: |
             {
-              text: '<!here>\n${{ steps.repository.outputs.name }}をリリースします\n${{ github.event.pull_request.html_url }}\n${{ steps.extract_body.outputs.release }}'
+              text: '<!here>\n${{ steps.repository.outputs.name }}をリリースします\n${{ github.event.pull_request.html_url }}\n```\n${{ steps.extract_body.outputs.release }}\n```'
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
