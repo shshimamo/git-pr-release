@@ -16,7 +16,15 @@ jobs:
       - name: Extract PR body
         id: extract_body
         run: |
-          release=$(gh pr view ${{ github.event.pull_request.number }} --json body | jq .body | sed -E 's/([^#])##([^#])/\1|\2/g' | cut -d '|' -f 2)
+          release=$(gh pr view ${{ github.event.pull_request.number }} --json body | jq .body |
+            # '## 'を'|'に置換
+            sed -E 's/([^#])## /\1|/g' |
+            # '|'で分割して2番目を取得
+            cut -d '|' -f 2 |
+            # 連続する改行を削除
+            sed -E 's/\\r\\n\\r\\n//g' |
+            # 概要を削除
+            sed -E 's/概要//')
           echo "release=${release}" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
