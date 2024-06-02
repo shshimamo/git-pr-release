@@ -1,0 +1,32 @@
+name: 'git-pr-release-slack'
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  gitPrRelease:
+    name: git-pr-release-slack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Extract PR body
+        id: extract_body
+        run: |
+          release=$(echo "${{ github.event.pull_request.body }}" | awk '/## 概要/{flag=1;next}/^##/{flag=0}flag')
+          echo "release=${release}" >> $GITHUB_OUTPUT
+      - id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: workflow,job,commit,repo,ref,author,took
+          custom_payload: |
+            {
+              text: '<!here>\n${{ steps.repository.outputs.name }}をリリースします\n${{ github.event.pull_request.html_url }}\n${{ steps.extract_body.outputs.release }}'
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
