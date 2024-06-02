@@ -16,8 +16,10 @@ jobs:
       - name: Extract PR body
         id: extract_body
         run: |
-          release=$(gh pr view 27 --json body | jq -r .body | awk '/## 概要/{flag=1;next}/##/{flag=0}flag')
+          release=$(gh pr view ${{ github.event.pull_request.number }} --json body | jq .body | sed -E 's/([^#])##([^#])/\1@\2/g' | cut -d '@' -f 2)
           echo "release=${release}" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
       - id: repository
         run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
       - uses: 8398a7/action-slack@v3
