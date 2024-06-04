@@ -33,7 +33,6 @@ jobs:
       - uses: 8398a7/action-slack@v3
         with:
           status: custom
-          fields: workflow,job,commit,repo,ref,author,took
           custom_payload: |
             {
               text: '<!here>\n${{ steps.repository.outputs.name }}をリリースします\n${{ github.event.pull_request.html_url }}\n```\n${{ steps.extract_body.outputs.release }}\n```'
