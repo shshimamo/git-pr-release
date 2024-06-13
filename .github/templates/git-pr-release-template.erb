@@ -1,12 +1,9 @@
 [Release] <%= Time.now.localtime("+09:00").strftime("%Y-%m-%d %H:%M:%S") %>
-
 <%- milestone_titles = pull_requests.map { |pr| pr.milestone&.title }.uniq -%>
-
 <%- if milestone_titles.include?(nil) -%>
   <%- milestone_titles.delete(nil) -%>
   <%- milestone_titles.push('No milestone') -%>
 <%- end -%>
-
 <%- milestone_titles&.each do |title| -%>
 <%= "## #{title}" %>
   <%- pull_requests.each do |pr| -%>
