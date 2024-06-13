@@ -4,8 +4,9 @@
   <%- milestone_titles.delete(nil) -%>
   <%- milestone_titles.push('No milestone') -%>
 <%- end -%>
+## :black_nib: 概要
 <%- milestone_titles&.each do |title| -%>
-<%= "## #{title}" %>
+<%= "### #{title}" %>
   <%- pull_requests.each do |pr| -%>
     <%- if (pr.milestone&.title || 'No milestone') == title -%>
 <%= "- [#{pr.title}](#{pr.html_url}) by #{pr.mention}" %>
