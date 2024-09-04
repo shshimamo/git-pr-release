@@ -1,0 +1,15 @@
+name: PR title check
+
+on:
+  pull_request:
+
+jobs:
+  echo_pull_request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo
+        run: |
+          echo "PR Title: ${{ github.event.pull_request.title }}"
+          echo "PR User: ${{ toJson(github.event.pull_request.user) }}"
+          echo "PR Sender: ${{ github.event.pull_request.sender }}"
