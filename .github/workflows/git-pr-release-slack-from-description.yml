@@ -1,0 +1,41 @@
+name: 'git-pr-release-slack'
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  gitPrRelease:
+    name: git-pr-release-slack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Extract PR body
+        id: extract_body
+        run: |
+          release=$(gh pr view ${{ github.event.pull_request.number }} --json body | jq .body |
+            # '## 'を'|'に置換
+            sed -E 's/([^#])## /\1|/g' |
+            # '|'で分割して2番目を取得
+            cut -d '|' -f 2 |
+            # 連続する改行を削除
+            sed -E 's/\\r\\n\\r\\n//g' |
+            # 概要を削除
+            sed -E 's/概要//')
+          echo "release=${release}" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - id: repository
+        run: echo "name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: '<!here>\n${{ steps.repository.outputs.name }}をリリースします\n${{ github.event.pull_request.html_url }}\n```\n${{ steps.extract_body.outputs.release }}\n```'
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
